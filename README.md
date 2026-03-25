@@ -1,5 +1,5 @@
 # sigaa-jumper
-Login automático no SIGAA e pulo de telas de aviso  
+Extensão de navegador para fazer login automático nos sistemas educacionais do SIGAA, além de fazer pulo de telas de aviso chatas que você já viu em todas as vezes que logou (podendo habilitar/desabilitar os pulos)  
 
 <img width="288" height="306" alt="image" src="https://github.com/user-attachments/assets/096337f5-b2bf-41b4-826f-f0309d42f239" />
 
