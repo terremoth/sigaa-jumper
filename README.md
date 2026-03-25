@@ -1,7 +1,7 @@
 # sigaa-jumper
 Login automático no SIGAA e pulo de telas de aviso  
 
-<img width="292" height="301" alt="image" src="https://github.com/user-attachments/assets/40c1d50d-57f4-4d69-a4c3-4b3ed945a996" />
+<img width="288" height="306" alt="image" src="https://github.com/user-attachments/assets/096337f5-b2bf-41b4-826f-f0309d42f239" />
 
 ## Como usar
 
