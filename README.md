@@ -9,8 +9,8 @@ Extensão de navegador para fazer login automático nos sistemas educacionais do
 2. Entre nas extensões do seu navegador e em "Gerenciar Extensões"
 3. Procure pelo botão "Carregar sem compactação" e clique
 4. Escolhe a pasta desejada (sigaa-chromium, sigaa-firefox etc)
-5. Pronto, já vai aparecer na barra, clique em extensões e pine ela se quiser.
-6. Clique nela, clique em configurações, ponha seu usuário e senha do sigaa e salve.  
+5. Pronto, já vai aparecer na barra de extensões do navegador, clique no ícone de extensões e pine ela se quiser.
+6. Clique na extensão (guarda-chuva verde branco em fudno verde), clique em configurações, ponha seu usuário e senha do sigaa e salve.  
 
 Atualmente funciona para os SIGAA do:
 - IFSC
