@@ -2,6 +2,7 @@
 
 const LOGIN_URL = 'https://sigaa.ifsc.edu.br/sigaa/verTelaLogin.do';
 const WARNING_URL = 'https://sigaa.ifsc.edu.br/sigaa/telaAvisoLogon.jsf';
+const MAX_ERROR_RETRIES = 3;
 
 const currentUrl = window.location.href;
 
@@ -40,6 +41,61 @@ function showBadge(msg, color) {
   badge.innerHTML = '<span style="font-size:18px;flex-shrink:0">⚡</span><span>' + msg + '</span>';
 }
 
+// Lida com o captcha do Cloudflare
+function isTurnstileSolved() {
+  var input = document.querySelector(
+    'input[name="cf-turnstile-response"], textarea[name="cf-turnstile-response"]'
+  );
+  if (input && input.value) return true;
+
+  var el = document.querySelector('[data-turnstile-response]');
+  if (el && el.getAttribute('data-turnstile-response')) return true;
+
+  return false;
+}
+
+function hasTurnstileWidget() {
+  return !!document.querySelector(
+    '.cf-turnstile, [data-sitekey], iframe[src*="challenges.cloudflare.com"]'
+  );
+}
+
+function waitForTurnstile(timeoutSeconds) {
+  return new Promise(function(resolve) {
+    if (!hasTurnstileWidget()) {
+      resolve('no-captcha');
+      return;
+    }
+
+    if (isTurnstileSolved()) {
+      resolve('solved');
+      return;
+    }
+
+    var deadline = Date.now() + (timeoutSeconds * 1000);
+    var remaining = timeoutSeconds;
+    showBadge('Aguardando captcha... ' + remaining + 's');
+
+    var interval = setInterval(function() {
+      remaining--;
+
+      if (isTurnstileSolved()) {
+        clearInterval(interval);
+        resolve('solved');
+        return;
+      }
+
+      if (Date.now() >= deadline) {
+        clearInterval(interval);
+        resolve('timeout');
+        return;
+      }
+
+      showBadge('Aguardando captcha... ' + remaining + 's');
+    }, 1000);
+  });
+}
+
 function handleLoginPage(creds) {
   const form = document.getElementById('loginForm') || document.forms['loginForm'];
   if (!form) return;
@@ -64,20 +120,54 @@ function handleLoginPage(creds) {
     passField.dispatchEvent(new Event(evt, { bubbles: true }));
   });
 
-  var delay = (creds.delay || 7);
-  showBadge('Login automático em ' + delay + 's... aguardando captcha');
+  sessionStorage.removeItem('sigaa_autologin_retries');
 
-  var remaining = delay;
-  var interval = setInterval(function() {
-    remaining--;
-    if (remaining > 0) {
-      showBadge('Enviando em ' + remaining + 's... aguardando captcha');
-    } else {
-      clearInterval(interval);
+  waitForTurnstile(creds.delay || 30).then(function(result) {
+    if (result === 'solved') {
+      showBadge('✅ Captcha resolvido! Fazendo login...');
+    } else if (result === 'no-captcha') {
       showBadge('Fazendo login...');
-      form.submit();
+    } else {
+      showBadge('⏱️ Timeout — tentando login...', '#e67e22');
     }
-  }, 1000);
+    setTimeout(function() { form.submit(); }, 500);
+  });
+}
+
+// Lida com a página de erro
+function handleErrorPage() {
+  var panel = document.querySelector('#painel-erro');
+  if (!panel || panel.textContent.indexOf('Comportamento Inesperado') === -1) return false;
+
+  var retries = parseInt(sessionStorage.getItem('sigaa_autologin_retries') || '0');
+
+  if (retries >= MAX_ERROR_RETRIES) {
+    showBadge('❌ Falhou ' + MAX_ERROR_RETRIES + 'x — login manual necessário', '#c0392b');
+    sessionStorage.removeItem('sigaa_autologin_retries');
+    return true;
+  }
+
+  sessionStorage.setItem('sigaa_autologin_retries', String(retries + 1));
+  showBadge(
+    '⚠️ Erro detectado — tentando novamente (' + (retries + 1) + '/' + MAX_ERROR_RETRIES + ')...',
+    '#e67e22'
+  );
+
+  setTimeout(function() {
+    window.location.href = LOGIN_URL;
+  }, 1500);
+
+  return true;
+}
+
+// Faz o redirecionamento para a página de login
+function handlePublicHomePage() {
+  var link = document.querySelector('#acesso a[href="/sigaa/"]');
+  if (!link) return false;
+
+  showBadge('Redirecionando para login...');
+  setTimeout(function() { link.click(); }, 300);
+  return true;
 }
 
 function handleWarningPage(skipWarnings) {
@@ -122,6 +212,10 @@ function init() {
       handleLoginPage(creds);
     } else if (currentUrl.startsWith(WARNING_URL)) {
       handleWarningPage(creds.skipWarnings);
+    } else if (handlePublicHomePage()) {
+      // handled
+    } else if (handleErrorPage()) {
+      // handled
     }
   }).catch(function(err) {
     console.warn('[SIGAA AutoLogin] Erro ao buscar credenciais:', err);
