@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGAA Auto Login</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 290px;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f7f9f7;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1a6b3c, #0d4a2a);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header img { width: 38px; height: 38px; }
+
+    .header h1 {
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .header p {
+      color: rgba(255,255,255,0.7);
+      font-size: 11px;
+      margin-top: 1px;
+    }
+
+    .body { padding: 18px 20px; }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: white;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot.ok { background: #22c55e; }
+    .dot.warn { background: #f59e0b; }
+
+    .status-text { font-size: 13px; color: #333; font-weight: 500; }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 9px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      margin-bottom: 9px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #1a6b3c, #0d4a2a);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #1a6b3c;
+      border: 1.5px solid #1a6b3c;
+    }
+
+    .footer {
+      font-size: 11px;
+      color: #aaa;
+      text-align: center;
+      padding: 0 20px 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="icons/icon48.png" alt="">
+    <div>
+      <h1>SIGAA Auto Login</h1>
+      <p>IFSC — Login automático</p>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="status-row">
+      <div class="dot" id="dot"></div>
+      <span class="status-text" id="statusText">Verificando...</span>
+    </div>
+
+    <a class="btn btn-primary" href="https://sigaa.ifsc.edu.br/sigaa/verTelaLogin.do" target="_blank">
+      🔑 Abrir SIGAA
+    </a>
+
+    <button class="btn btn-secondary" id="btnOpts" type="button">
+      ⚙️ Configurações
+    </button>
+  </div>
+
+  <div class="footer">Dados salvos localmente no dispositivo</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

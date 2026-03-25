@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGAA Auto Login — Configurações</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f0f4f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 16px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      width: 100%;
+      max-width: 480px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #1a6b3c, #0d4a2a);
+      padding: 28px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .card-header img {
+      width: 48px;
+      height: 48px;
+    }
+
+    .card-header-text h1 {
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .card-header-text p {
+      color: rgba(255,255,255,0.75);
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    .card-body {
+      padding: 32px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 16px;
+      margin-top: 28px;
+    }
+
+    .section-title:first-child { margin-top: 0; }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="number"] {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 15px;
+      color: #222;
+      background: #fafafa;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #1a6b3c;
+      box-shadow: 0 0 0 3px rgba(26,107,60,0.12);
+      background: white;
+    }
+
+    .password-wrap {
+      position: relative;
+    }
+
+    .password-wrap input {
+      padding-right: 42px;
+    }
+
+    .toggle-pass {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      color: #888;
+      padding: 4px;
+      line-height: 1;
+    }
+
+    .toggle-pass:hover { color: #1a6b3c; }
+
+    .hint {
+      font-size: 12px;
+      color: #999;
+      margin-top: 5px;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .toggle-row:last-child { border-bottom: none; }
+
+    .toggle-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .toggle-desc {
+      font-size: 12px;
+      color: #999;
+      margin-top: 2px;
+    }
+
+    .switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .switch input { display: none; }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #ccc;
+      border-radius: 24px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .slider::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: white;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    .switch input:checked + .slider { background: #1a6b3c; }
+    .switch input:checked + .slider::before { transform: translateX(20px); }
+
+    .delay-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .delay-row input {
+      width: 80px;
+    }
+
+    .delay-row span {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .btn-save {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #1a6b3c, #0d4a2a);
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 28px;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn-save:hover { opacity: 0.92; }
+    .btn-save:active { transform: scale(0.98); }
+
+    .toast {
+      display: none;
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .toast.success {
+      background: #d1fae5;
+      color: #065f46;
+      display: block;
+    }
+
+    .toast.error {
+      background: #fee2e2;
+      color: #991b1b;
+      display: block;
+    }
+
+    .security-note {
+      display: flex;
+      gap: 8px;
+      background: #fffbeb;
+      border: 1px solid #fcd34d;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 12px;
+      color: #92400e;
+      margin-top: 6px;
+    }
+
+    .security-note span:first-child { font-size: 16px; flex-shrink: 0; }
+
+    hr { border: none; border-top: 1px solid #eee; margin: 24px 0 0; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-header">
+      <img src="icons/icon128.png" alt="Logo">
+      <div class="card-header-text">
+        <h1>SIGAA Auto Login</h1>
+        <p>Configurações da extensão</p>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="section-title">Credenciais</div>
+
+      <div class="field">
+        <label for="username">Usuário (matrícula / login)</label>
+        <input type="text" id="username" placeholder="ex: 20231234" autocomplete="off" spellcheck="false">
+      </div>
+
+      <div class="field">
+        <label for="password">Senha</label>
+        <div class="password-wrap">
+          <input type="password" id="password" placeholder="Sua senha do SIGAA" autocomplete="new-password">
+          <button class="toggle-pass" id="togglePass" title="Mostrar/ocultar senha">👁️</button>
+        </div>
+        <div class="security-note">
+          <span>🔐</span>
+          <span>Sua senha é armazenada localmente em Base64. Não é enviada a nenhum servidor externo.</span>
+        </div>
+      </div>
+
+      <hr>
+      <div class="section-title">Comportamento</div>
+
+      <div class="field">
+        <label>Aguardar captcha (segundos)</label>
+        <div class="delay-row">
+          <input type="number" id="delay" min="3" max="30" value="7">
+          <span>segundos após carregar a página de login</span>
+        </div>
+        <p class="hint">O captcha do Cloudflare leva ~7s para ser resolvido automaticamente. Aumente se necessário.</p>
+      </div>
+
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Pular telas de aviso</div>
+          <div class="toggle-desc">Clica automaticamente em "Continuar >>" nas telas de aviso</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="skipWarnings" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <button class="btn-save" id="saveBtn">💾 Salvar configurações</button>
+      <div class="toast" id="toast"></div>
+    </div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
